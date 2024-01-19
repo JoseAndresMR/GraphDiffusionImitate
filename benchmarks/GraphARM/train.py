@@ -6,9 +6,9 @@ import math
 import wandb
 import os
 
-from benchmarks.GraphARM.models import DiffusionOrderingNetwork, DenoisingNetwork
-from benchmarks.GraphARM.utils import NodeMasking
-from benchmarks.GraphARM.grapharm import GraphARM
+from models import DiffusionOrderingNetwork, DenoisingNetwork
+from utils import NodeMasking
+from grapharm import GraphARM
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"Using device {device}")
