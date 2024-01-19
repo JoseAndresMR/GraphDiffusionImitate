@@ -106,6 +106,9 @@ class GraphARM(nn.Module):
             val_data,
             M = 4, # number of diffusion trajectories to be created for each graph
         ):
+
+        eta1 = 1.
+        eta2 = 1.
         
         self.denoising_optimizer.zero_grad()
         self.ordering_optimizer.zero_grad()
@@ -135,7 +138,7 @@ class GraphARM(nn.Module):
                             w_k = w_k.detach()
                             wandb.log({"target_node_ordering_prob": w_k.item()})
                             # calculate loss
-                            loss = self.vlb(G_0, node_type_probs, edge_type_probs, w_k, node_order[k], node_order, t, M) # cumulative, to join (k) from all previously denoised nodes
+                            loss = self.vlb(G_0, node_type_probs, edge_type_probs, w_k, node_order[k], node_order, t, M) * eta1 # cumulative, to join (k) from all previously denoised nodes
                             wandb.log({"vlb": loss.item()})
 
                             acc_loss += loss.item()
@@ -180,7 +183,7 @@ class GraphARM(nn.Module):
                             # calculate loss
                             reward = self.vlb(G_0, node_type_probs, edge_type_probs, w_k, node_order[k], node_order, t, M)
                             wandb.log({"vlb": reward.item()})
-                            acc_reward -= reward.item()
+                            acc_reward -= reward.item() * eta2
                             # backprop (accumulated gradients)
                             reward.backward()
                             pbar.set_description(f"Reward: {acc_reward:.4f}")
